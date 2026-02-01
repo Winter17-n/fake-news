@@ -41,9 +41,11 @@ README.md
 - The application runs using saved model files only
 
 ## Author
-Your Name
+Nikita Sharma.
+
 GitHub: https://github.com/Winter17-n
 
 LinkedIn: https://www.linkedin.com/in/nikita-sharma-158545312/
+
 
 
