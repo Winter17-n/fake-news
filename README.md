@@ -44,4 +44,5 @@ README.md
 Your Name
 GitHub: https://github.com/Winter17-n
 
-LinkedIn: https://linkedin.com/in/yourusername
+LinkedIn: https://www.linkedin.com/in/nikita-sharma-158545312/
+
