@@ -54,3 +54,4 @@ if st.button("Predict"):
             st.error("This news is FAKE, Someone made a fool of u 🥲")
         else:
             st.success("This news is REAL, you found some good tea🤭")
+
