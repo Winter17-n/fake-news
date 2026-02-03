@@ -1,5 +1,6 @@
 import os
 import base64
+import re
 import streamlit as st
 import joblib
 
@@ -7,14 +8,19 @@ import joblib
 model = joblib.load("svr_model.pkl")
 vectorizer = joblib.load("vect.pkl")
 
+# ---------------- Cleaning Function (SAME AS TRAINING) ----------------
+def clean_source_bias(text):
+    text = re.sub(r'^[A-Z\s]+\s*\(Reuters\)\s*-\s*', '', text)
+    text = re.sub(r'\bReuters\b', '', text)
+    return text
+
 # ---------------- Page Config ----------------
 st.set_page_config(
     page_title="Fake News Detector",
     layout="centered"
 )
 
-# ---------------- UI ----------------
-# -------------Setting the Image here---------------
+# ---------------- Header Image ----------------
 img_path = "faken.jpg"
 if os.path.exists(img_path):
     with open(img_path, "rb") as f:
@@ -34,22 +40,39 @@ if os.path.exists(img_path):
     </div>
     """, unsafe_allow_html=True)
 
-# ---------------Settling The Title here-----------------
-st.markdown("<h1 style='text-align: center; font-family: Times New Roman; color: 'white'> Fake News Detection Assistant.</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: 'white'>Paste a news article below and check whether it is Legit or just a Bluff😒.<p>", unsafe_allow_html=True)
+# ---------------- Title ----------------
+st.markdown(
+    "<h1 style='text-align:center; font-family:Times New Roman;'>Fake News Detection Assistant</h1>",
+    unsafe_allow_html=True
+)
 
-news_text = st.text_area("",placeholder="What's The Tea?🤭 (Put Atleast 100-150 words for better analysis)")
+st.markdown(
+    "<p style='text-align:center;'>Paste a news article below and check whether it is Legit or just a Bluff😒.</p>",
+    unsafe_allow_html=True
+)
+
+# ---------------- Input ----------------
+news_text = st.text_area(
+    "",
+    placeholder="What's The Tea?🤭 (Put Atleast 100-150 words for better analysis)")
+
+# ---------------- Prediction ----------------
 if st.button("Predict"):
     if news_text.strip() == "":
         st.warning("Please enter some news text.")
+    elif len(news_text.split()) < 40:
+        st.warning("Insufficient context to classify reliably. Please paste a longer article.")
     else:
-#---------Vectorize input--------
-        text_vec = vectorizer.transform([news_text])
+        # Clean text
+        cleaned_text = clean_source_bias(news_text)
 
-#----------Prediction-----------
+        # Vectorize
+        text_vec = vectorizer.transform([cleaned_text])
+
+        # Predict
         prediction = model.predict(text_vec)[0]
 
-#-----------Output-----------
+        # Output
         if prediction == "Fake News.":
             st.error("This news is FAKE, Someone made a fool of u 🥲")
         else:
